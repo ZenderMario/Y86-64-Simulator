@@ -1,0 +1,16 @@
+Set Stack = 0x1000
+PRINT=OFF
+
+#FUNC = 0x0a00
+irmov $16, %rax
+irmov $-1, %rbx
+.L1:
+add %rbx, %rax
+jne .L1
+
+
+#MAIN = 0x0
+call .FUNC
+
+
+END
