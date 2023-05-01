@@ -335,7 +335,7 @@ namespace SEQ {
                 break;
                 //call
             case 9:
-                PC.Set( valC.loca() + 48);
+                PC.Set( valM.loca() + 48);
                 break;
                 //ret
             default:
