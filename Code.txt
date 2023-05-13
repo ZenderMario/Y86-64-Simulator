@@ -1,16 +1,51 @@
-Set Stack = 0x1000
+Set Stack = 0xA000
 PRINT=OFF
 
-#FUNC = 0x0a00
-irmov $16, %rax
-irmov $-1, %rbx
-.L1:
-add %rbx, %rax
-jne .L1
+#HAN = 0x0f00
+sub %r8, %rax
+je .L1
 
+push %rdi
+push %rbp
+push %rsi
+push %rax
+
+rrmov %rsi, %r9
+rrmov %rbp, %rsi
+rrmov %r9, %rbp
+call .HAN
+pop %rax
+push %rax
+rrmov %rsi, %r9
+rrmov %rbp, %rsi
+rrmov %r9, %rbp
+rrmov %rsi, %r9
+xor %rdi, %r9
+PRINT %r9
+rrmov %rdi, %r9
+rrmov %rbp, %rdi
+rrmov %r9, %rbp
+call .HAN
+pop %rax
+pop %rsi
+pop %rbp
+pop %rdi
+ret
+
+.L1:
+rrmov %rsi, %r9
+xor %rdi, %r9
+PRINT %r9
+ret
 
 #MAIN = 0x0
-call .FUNC
-
+irmov $1, %rsi
+irmov $2, %rbp
+irmov $4, %rdi
+irmov $1, %r8
+irmov $4, %rax
+call .HAN
 
 END
+
+
