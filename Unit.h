@@ -121,7 +121,7 @@ namespace Unit {
     class Decoder
     {
     public:
-        RangeType operator()( const Bit< bits>& b) {
+        uint64_t operator()( const Bit< bits>& b) {
             if( bits > ADDRBIT)
                 throw std::range_error( "Unvalid Conversion!");
 

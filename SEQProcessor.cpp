@@ -160,12 +160,8 @@ namespace SEQ {
 
         RangeType codeR = icodeDecoder( IR.icode);
 
-        const Word wdNeg8 = {
-                1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,
-                1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,
-                1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,
-                1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  0, 0, 0, 0
-        };
+        const Word wdNeg8 = ConvertW( "-8");
+        const Word wd8    = ConvertW( "8");
 
         if( codeR == 0 || codeR == 1)
             return {0};
@@ -177,10 +173,12 @@ namespace SEQ {
         else if( codeR == 8 || codeR == 10)
             aluA = wdNeg8;
         else if( codeR == 9 || codeR == 11)
-            aluA = { 1, 0, 0, 0, 0};
+            aluA = wd8;
 
         if( codeR == 2 || codeR == 3 || codeR == 12)
             aluB = { 0};
+        else if( codeR == 8 ||codeR == 9 || codeR == 10 || codeR == 11 )
+            aluB = reg[ RRSP];
         else
             aluB = outputReg.B;
 
@@ -366,7 +364,7 @@ namespace SEQ {
         Word valP;
         //those value are prepared to serve for splitting and other steps
 
-        Unit::EQUGate< 10 * Unit::BYTEBIT> insEQU;
+        Unit::EQUGate< 4> insEQU;
 
         Translates();
 
@@ -378,25 +376,26 @@ namespace SEQ {
             mem.Read( PC, ins.loca(), 10);
             //read instructions, some needs 10 bytes to code
 
-            PC.Print();
-
-            if( insEQU( ins, { 0})) {
-                quitFlag = true;
-            }
+            if( !isPrint)
+                PC.Print();
 
             Fetch( ins, valP, regA, regB, cons);
             //align
+
+            if( insEQU( IR.icode, { 0})) {
+                break;
+            }
 
             Decode( regA, regB);
             valE = Execute( cons);
             Access( valE, outputReg.A, valP, valM);
             Write( valE, valM);
 
+            if( isPrint)
+                Print();
+
             Update( cons, valM, valP);
         }
-
-        if( isPrint)
-            Print();
 
     }
 
@@ -533,7 +532,7 @@ namespace SEQ {
         std::cout << "Please make sure there is file in your source file folder" << std::endl;
         //std::getline( std::cin, name);
 
-        Reader::FileReader file( std::string( "Code.txt"));
+        Reader::FileReader file( std::string( "../Code.txt"));
 
         Address adre;
         Incrementer< ADDRBIT> adreIncre;
@@ -613,6 +612,12 @@ namespace SEQ {
                         incre = 2;break;
                     case 7:
                         incre = 9;break;
+                    case 8:
+                        incre = 9;break;
+                    case 10:
+                        incre = 2;break;
+                    case 11:
+                        incre = 2;break;
                     case 12:
                         incre = 2;break;
                 }
@@ -625,6 +630,17 @@ namespace SEQ {
         auto p = labelMap.find( "MAIN");
         if( p == labelMap.end() || Decoder< ADDRBIT>()( p->second) != 0)
             throw std::runtime_error( "Invalid Program Entrance!");
+        //check program entrance
+
+        Decoder< 16> addressDecoder;
+        Address rsp;
+        rsp.Set( reg[ RRSP].loca() + 48);
+        for( std::pair< std::string, Address> p: labelMap) {
+            if( addressDecoder( p.second) > addressDecoder( rsp)) {
+                ErrorMessage( "Label Address Over Stack", -1);
+            }
+        }
+
 
         file.ReWind();
         file.Read( ins);
@@ -699,7 +715,7 @@ namespace SEQ {
                             //irmov $64, %rdx
                             break;
                         case 4:
-                            ele2 = Element( countL, ins, "%", 1, ")", 0); //rb
+                            ele2 = Element( countL, ins, "%", 1, ")", 0, true); //rb
                             mem.WriteB(adre, FINDR(ele1, countL) + FINDR(ele2, countL));
                             adre = adreIncre(adre);
 
@@ -747,7 +763,8 @@ namespace SEQ {
         }
 
         std::string t( tmp.rbegin(), tmp.rend());
-        throw std::runtime_error( str + "  Line:" + tmp);
+        t += "Line";
+        throw std::runtime_error( str + ' ' + t);
     }
 
     /***********************************************************************/
