@@ -532,7 +532,7 @@ namespace SEQ {
         std::cout << "Please make sure there is file in your source file folder" << std::endl;
         std::getline( std::cin, name);
 
-        Reader::FileReader file( std::string( "name"));
+        Reader::FileReader file( std::string( name));
 
         Address adre;
         Incrementer< ADDRBIT> adreIncre;
