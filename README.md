@@ -25,6 +25,7 @@ Firstly, here is all instructions it supports
 | push   Ra        | push register value to stack                      |
 | pop    Rb        | pop stack value to register                       |
 | PRINT  Ra        | print information of registers( for debug         |
+
 Then, we list all registers( 15 in total, 1 marked as none to simplify process)
 Those are visible to programmers, you can open an option what we'll talk later
 to force all information to be printed out.
