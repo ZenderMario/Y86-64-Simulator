@@ -34,12 +34,12 @@ namespace SEQ {
         IR.ifunc.Print();
 
         std::cout << std::boolalpha;
-        std::cout << "Need Rigister: " << ctrlUnit.needRegis << '\n';
-        std::cout << "Need Constants: " << ctrlUnit.needCons << '\n';
-        std::cout << "Instruction Memory Error: " << ctrlUnit.imemErr << '\n';
-        std::cout << "Data Memory Error: " << ctrlUnit.dmemErr << '\n';
-        std::cout << "Instruction Valid: " << ctrlUnit.instrInvalid << '\n';
-        std::cout << "Condition Code: " << ctrlUnit.cnd << '\n';
+        std::cout << "Need Rigister: " << ctrlUnit.needRegis << std::endl;
+        std::cout << "Need Constants: " << ctrlUnit.needCons << std::endl;
+        std::cout << "Instruction Memory Error: " << ctrlUnit.imemErr << std::endl;
+        std::cout << "Data Memory Error: " << ctrlUnit.dmemErr << std::endl;
+        std::cout << "Instruction Valid: " << ctrlUnit.instrInvalid << std::endl;
+        std::cout << "Condition Code: " << ctrlUnit.cnd << std::endl;
 
         std::cout << std::noboolalpha;
     }
@@ -368,7 +368,8 @@ namespace SEQ {
 
         Translates();
 
-        std::cout << "PC :" << std::endl;
+        if( !isPrint)
+            std::cout << "PC :" << std::endl;
 
         while( !quitFlag) {
             instrL ins;
@@ -435,7 +436,7 @@ namespace SEQ {
             pos2 = str.find_first_of( flag2);
 
         if( pos1 == -1 || pos2 == -1)
-            ErrorMessage( "Error in Element Spilt", countL);
+            ErrorMessage( "Error in Element Spilt.", countL);
 
         pos1 += bias1;
         pos2 += bias2;
